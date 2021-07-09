@@ -6,12 +6,14 @@ import com.medicine.telemedicine.model.Role;
 import com.medicine.telemedicine.model.RoleName;
 import com.medicine.telemedicine.model.Hospital;
 import com.medicine.telemedicine.model.Doctors;
+import com.medicine.telemedicine.model.Patient;
 import com.medicine.telemedicine.payload.ApiResponse;
 import com.medicine.telemedicine.payload.JwtAuthenticationResponse;
 import com.medicine.telemedicine.exception.BadRequestException;
 import com.medicine.telemedicine.payload.LoginRequest;
 import com.medicine.telemedicine.payload.SignUpRequestHosp;
 import com.medicine.telemedicine.payload.SignUpRequestDoc;
+import com.medicine.telemedicine.payload.SignUpRequestPatient;
 import com.medicine.telemedicine.repository.RoleRepository;
 import com.medicine.telemedicine.repository.HospitalRepository;
 import com.medicine.telemedicine.security.JwtTokenProvider;
@@ -41,6 +43,8 @@ import java.util.Set;
 import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import com.medicine.telemedicine.repository.DoctorRepository;
+import com.medicine.telemedicine.repository.PatientRepository;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -55,6 +59,12 @@ public class AuthController {
 
     @Autowired
     RoleRepository roleRepository;
+    
+    @Autowired
+    DoctorRepository doctorRepository;
+    
+    @Autowired
+    PatientRepository patientRepository;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -62,8 +72,7 @@ public class AuthController {
     @Autowired
     JwtTokenProvider tokenProvider;
     
-    @Autowired
-    DoctorRepository doctorRepository;
+
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -200,7 +209,7 @@ public class AuthController {
         }
 
 
-        // Creating user's account
+        // Creating Doctor's account
         
         Doctors doc = new Doctors(signUpRequest.getFirst_name() ,signUpRequest.getLast_name(),signUpRequest.getMiddle_name(), signUpRequest.getDob(),signUpRequest.getPhonenumber(),signUpRequest.getEmail(),signUpRequest.getAddress(),signUpRequest.getGender(), signUpRequest.getUsername(),
         		 signUpRequest.getPassword(),signUpRequest.getUsertype(),signUpRequest.getMed_school(),signUpRequest.getYear_graduation(),signUpRequest.getPractice_no(),signUpRequest.getAffiliate_hospital(),signUpRequest.getImage(),signUpRequest.getSpecialty(),signUpRequest.getCurrent_address());
@@ -230,6 +239,60 @@ public class AuthController {
 
         return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
     }
+    
+    
+    // Register Patients 
+    
+    
+    @PostMapping("/signup3")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequestPatient signUpRequest) {
+        if(patientRepository.existsByUsername(signUpRequest.getUsername())) {
+            return new ResponseEntity(new ApiResponse(false, "Username is already taken!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        if(patientRepository.existsByEmail(signUpRequest.getEmail())) {
+            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+        
+        if(patientRepository.existsByPhonenumber(signUpRequest.getPhonenumber())) {
+            return new ResponseEntity(new ApiResponse(false, "Phone numenr already in use!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+
+
+        // Creating Patient's account
+        
+        Patient pat = new Patient(signUpRequest.getFirst_name() ,signUpRequest.getLast_name(),signUpRequest.getMiddle_name(),signUpRequest.getGov_id(), signUpRequest.getDob(),signUpRequest.getPhonenumber(),signUpRequest.getOther_no(),signUpRequest.getEmail(),signUpRequest.getAddress(),signUpRequest.getGender(), signUpRequest.getAllergies(),signUpRequest.getWeight(),signUpRequest.getHeight(),signUpRequest.getBlood_group(),signUpRequest.getGenotype(),signUpRequest.getUsername(),
+        		 signUpRequest.getPassword(),signUpRequest.getUsertype());
+
+       
+        pat.setPassword(passwordEncoder.encode(pat.getPassword()));
+        
+        Set<String> strRoles = signUpRequest.getRole();
+		Set<Role> roles = new HashSet<>();
+		
+		
+        Role userRole = roleRepository.findByName(RoleName.ROLE_PATIENT)
+                .orElseThrow(() -> new AppException("User Role not set."));
+
+	
+
+		roles.add(userRole); 
+		pat.setUsertype("3");
+		pat.setRoles(roles);
+      
+  
+        Patient result = patientRepository.save(pat);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath().path("/api/patinets/{username}")
+                .buildAndExpand(result.getUsername()).toUri();
+
+        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+    }
+    
     
     
     @GetMapping(path = {"/hosp/{id}"})

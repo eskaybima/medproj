@@ -110,8 +110,9 @@ public class Patient extends DateAudit {
 	@Column (columnDefinition = "varchar default 'N'")
 	private String active;
 	
-	private String user_type ;
-	
+
+	private String usertype ;
+
 	
 	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
@@ -131,7 +132,7 @@ public class Patient extends DateAudit {
 
     }
 	
-	public Patient(String first_name,String last_name,String middle_name,String gov_id,String dob,String phonenumber,String other_no,String email,String address,String gender,String allergies,String weight,String height,String blood_group,String genotype,String username,String password,String user_type) {
+	public Patient(String first_name,String last_name,String middle_name,String gov_id,String dob,String phonenumber,String other_no,String email,String address,String gender,String allergies,String weight,String height,String blood_group,String genotype,String username,String password,String usertype) {
 		this.first_name =  first_name ;
 		this.last_name   =  last_name; 
 		this.middle_name =  middle_name;
@@ -149,8 +150,7 @@ public class Patient extends DateAudit {
 		this.genotype = genotype; 
 		this.username = username;
 		this.password  = password;
-		this.user_type = user_type;
-
+		this.usertype = usertype;
     }
 
 
@@ -300,13 +300,15 @@ public class Patient extends DateAudit {
 	public void setActive(String active) {
 		this.active = active;
 	}
-	public String getUser_type() {
-		return user_type;
+	public String getUsertype() {
+		return usertype;
 	}
 
-	public void setUser_type(String user_type) {
-		this.user_type = user_type;
+
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
 	}
+
 	public Set<Role> getRoles() {
 		return roles;
 	}

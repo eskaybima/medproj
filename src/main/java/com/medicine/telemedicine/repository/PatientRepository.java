@@ -5,19 +5,22 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.medicine.telemedicine.model.Doctors;
 import com.medicine.telemedicine.model.Patient;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 	
-	
-	Optional<Patient> findByEmail(String email);
+	Optional<Doctors> findByEmail(String email);
 
-    //Optional<Patient> findByUsernameOrEmail(String username, String email);
+    Optional<Doctors> findByUsernameOrEmail(String username, String email);
 
-    List<Patient> findByIdIn(List<Long> userIds);
-
+    List<Doctors> findByIdIn(List<Long> userIds);
+    Optional<Patient> findByUsername(String username);
     Boolean existsByEmail(String email);
+    Boolean existsByUsername(String username);
     
     Boolean existsByPhonenumber(String phonenumber);
-
+    
+    List<Patient> findByUsertype(String usertype);
+    long countByUsertype(String usertype);
 }
