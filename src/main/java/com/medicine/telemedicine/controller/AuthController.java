@@ -83,9 +83,9 @@ public class AuthController {
                         loginRequest.getPassword()
                 )
         );
-
+       
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+    
         String jwt = tokenProvider.generateToken(authentication);
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
     	 } catch (BadCredentialsException exception) {
@@ -341,6 +341,17 @@ public class AuthController {
     		   
        
      
+    }
+    
+   //findByUsername
+
+    @GetMapping(path = {"/hosp"})
+    public ResponseEntity<?> findUsers(@Valid @RequestBody LoginRequest loginRequest){
+     // return hospitalRepository.findByUsername();
+      
+    	List<Hospital> updated = hospitalRepository.findByUsername(loginRequest.getUsernameOrEmail());
+        return ResponseEntity.ok().body(updated);
+              
     }
      
 }

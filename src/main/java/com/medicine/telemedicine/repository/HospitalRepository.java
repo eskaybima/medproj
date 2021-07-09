@@ -16,7 +16,8 @@ public interface HospitalRepository extends JpaRepository<Hospital, Long> {
     Optional<Hospital> findByUsernameOrEmail(String username, String email);
 
     List<Hospital> findByIdIn(List<Long> userIds);
-    Optional<Hospital> findByUsername(String username);
+    //Optional<Hospital> findByUsername(String username);
+    List<Hospital> findByUsername(String username);
     Boolean existsByEmail(String email);
     Boolean existsByUsername(String username);
     

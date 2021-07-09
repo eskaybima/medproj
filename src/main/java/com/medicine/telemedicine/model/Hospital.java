@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Entity
 @Table(name = "hospitals", uniqueConstraints = {
 
@@ -75,9 +76,13 @@ public class Hospital extends DateAudit {
 	private String active;
 	private String usertype;
 	
+	private String first_name ;
 	
+
+	private String last_name;
 	 
 
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	    @JoinTable(name = "user_roles",
 	            joinColumns = @JoinColumn(name = "hospital_id"),
@@ -227,4 +232,21 @@ public class Hospital extends DateAudit {
 		public void setUsertype(String usertype) {
 			this.usertype = usertype;
 		}
+		
+		public String getFirst_name() {
+			return first_name;
+		}
+
+		public void setFirst_name(String first_name) {
+			this.first_name = first_name;
+		}
+
+	public String getLast_name() {
+			return last_name;
+		}
+
+		public void setLast_name(String last_name) {
+			this.last_name = last_name;
+		}
+
 }
