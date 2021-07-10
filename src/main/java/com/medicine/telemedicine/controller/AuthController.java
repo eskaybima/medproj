@@ -353,5 +353,40 @@ public class AuthController {
         return ResponseEntity.ok().body(updated);
               
     }
-     
+    
+    
+    @GetMapping(path = {"/hosp/{username}"})
+    public ResponseEntity<?> findUsers2(@PathVariable String username){
+     // return hospitalRepository.findByUsername();
+      
+    	List<Hospital> updated = hospitalRepository.findByUsername(username);
+        return ResponseEntity.ok().body(updated);
+              
+    }
+  /**  
+    @GetMapping(path = {"/hospby/{username}"})
+    public ResponseEntity<?> findUsersByEmail(@PathVariable String username){
+
+    	Optional<Hospital> updated = hospitalRepository.findByUsernameOrEmail(username,username);
+    	Hospital hosp = updated.get();
+        return ResponseEntity.ok().body(hosp);
+              
+    }
+  
+    @GetMapping(path ={"/hospby/{username}"})
+    public ResponseEntity<?> findUsersByEmail2(@PathVariable String username) {
+      
+          .map(record -> {
+        	  Hospital hosp =  hospitalRepository.findByUsernameOrEmail(username,username);
+           return ResponseEntity.ok().body(updated);
+          }).orElseThrow(() -> new RuntimeException("User id not found"));
+    }
+      **/
+    @GetMapping(path = {"/hospby/{username}"})
+    public ResponseEntity<?> findById2(@PathVariable String username){
+      return hospitalRepository.findByUsernameOrEmail(username,username)
+              .map(record -> ResponseEntity.ok().body(record))
+              .orElseThrow(() -> new EntityNotFoundException(Hospital.class, "id",username));
+    }
+    
 }
